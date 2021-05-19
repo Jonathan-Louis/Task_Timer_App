@@ -1,6 +1,7 @@
 package com.jonathanlouis.tasktimerapp;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     public static final int DIALOG_DELETE_ID = 1;
     public static final int DIALOG_CANCEL_EDIT_ID = 2;
 
-    private AlertDialog dialog = null;
+    private AlertDialog mDialog = null;
 
 
     @Override
@@ -48,8 +49,8 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     @Override
     protected void onStop() {
         super.onStop();
-        if(dialog != null && dialog.isShowing()){
-            dialog.dismiss();
+        if(mDialog != null && mDialog.isShowing()){
+            mDialog.dismiss();
         }
     }
 
@@ -183,16 +184,24 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         builder.setTitle(R.string.app_name);
         builder.setIcon(R.mipmap.ic_launcher);
         builder.setView(messageView);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.d(TAG, "onClick: called from showAboutDialog");
+                if(mDialog != null && mDialog.isShowing()){
+                    mDialog.dismiss();
+                }
+            }
+        });
 
-        dialog = builder.create();
-        dialog.setCanceledOnTouchOutside(true);
+        mDialog = builder.create();
+        mDialog.setCanceledOnTouchOutside(true);
 
         TextView tv = (TextView) messageView.findViewById(R.id.about_version);
         tv.setText("v" + BuildConfig.VERSION_NAME);
 
-        dialog.show();
+        mDialog.show();
     }
-
 
     private void taskEditRequest(Task task){
         Log.d(TAG, "taskEditRequest: called");
