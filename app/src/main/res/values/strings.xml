@@ -32,7 +32,9 @@
     <string name="cancelEditDialog_positive_caption">Continue Editing</string>
     <string name="cancelEditDialog_negative_caption">Abandon Changes</string>
     <string name="about_copyright">Copyright © 2021 Jonathan Louis</string>
-    <string name="about_weblink">Instructions available at www.example.com</string>
+    <string name="about_weblink">Instructions available at </string>
+    <string name="about_weblink_url"><u>http://www.example.com</u></string>
+    <string name="about_weblink_21">Instructions available at www.example.com</string>
     <string name="about_email">For support email tasktimer@email.com</string>
     <string name="about_credits">Icon derived from <b>analog clock</b> @ www.openclipart.org by <b>Anonymous</b></string>
 </resources>
