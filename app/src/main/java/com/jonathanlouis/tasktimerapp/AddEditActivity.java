@@ -23,12 +23,14 @@ public class AddEditActivity extends AppCompatActivity implements AddEditFragmen
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        AddEditFragment fragment = new AddEditFragment();
+        if(savedInstanceState == null) {
+            AddEditFragment fragment = new AddEditFragment();
 
-        Bundle arguments = getIntent().getExtras();
-        fragment.setArguments(arguments);
+            Bundle arguments = getIntent().getExtras();
+            fragment.setArguments(arguments);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.add_edit_framelayout, fragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.add_edit_framelayout, fragment).commit();
+        }
     }
 
     @Override
