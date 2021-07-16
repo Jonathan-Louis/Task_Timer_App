@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     private boolean twoPane = false;
     public static final int DIALOG_DELETE_ID = 1;
     public static final int DIALOG_CANCEL_EDIT_ID = 2;
+    private static final int DIALOG_CANCEL_EDIT_UP_ID = 3;
 
     private AlertDialog mDialog = null;
 
@@ -106,6 +107,16 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
                 
             case R.id.menumain_generate:
                 break;
+
+            case android.R.id.home:
+                Log.d(TAG, "onOptionsItemSelected: home button pressed");
+                AddEditFragment fragment = (AddEditFragment) getSupportFragmentManager().findFragmentById(R.id.task_details_container);
+                if(fragment.canClose()){
+                    return super.onOptionsItemSelected(item);
+                } else {
+                    showConfirmationDialog(MainActivity.DIALOG_CANCEL_EDIT_UP_ID);
+                    return true;
+                }
         }
 
         return super.onOptionsItemSelected(item);
@@ -162,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
                 getContentResolver().delete(TasksContract.buildTaskUri(args.getLong(TasksContract.Columns._ID)), null, null);
                 break;
             case DIALOG_CANCEL_EDIT_ID:
+            case DIALOG_CANCEL_EDIT_UP_ID:
                 break;
         }
     }
@@ -173,13 +185,17 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
             case DIALOG_DELETE_ID:
                 break;
             case DIALOG_CANCEL_EDIT_ID:
+            case DIALOG_CANCEL_EDIT_UP_ID:
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 Fragment fragment = fragmentManager.findFragmentById(R.id.task_details_container);
 
                 if(fragment != null){
                     getSupportFragmentManager().beginTransaction().remove(fragment).commit();
                     if(twoPane){
-                        finish();
+                        //quit only if back button was used
+                        if(dialogID == DIALOG_CANCEL_EDIT_ID) {
+                            finish();
+                        }
                     } else {
                         View addEditLayout = findViewById(R.id.task_details_container);
                         View mainFragment = findViewById(R.id.mainFragment);
@@ -209,15 +225,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
             super.onBackPressed();
         } else {
             //show dialogue to confirm to quit editing
-            AppDialog appDialog = new AppDialog();
-            Bundle args = new Bundle();
-            args.putInt(AppDialog.DIALOG_ID, DIALOG_CANCEL_EDIT_ID);
-            args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.cancelEditDialog_message));
-            args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.cancelEditDialog_positive_caption);
-            args.putInt(AppDialog.DIALOG_NEGATIVE_RID, R.string.cancelEditDialog_negative_caption);
-
-            appDialog.setArguments(args);
-            appDialog.show(getSupportFragmentManager(), null);
+            showConfirmationDialog(MainActivity.DIALOG_CANCEL_EDIT_ID);
         }
     }
 
@@ -265,6 +273,18 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         }
 
         mDialog.show();
+    }
+
+    private void showConfirmationDialog(int dialogID){
+        AppDialog appDialog = new AppDialog();
+        Bundle args = new Bundle();
+        args.putInt(AppDialog.DIALOG_ID, dialogID);
+        args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.cancelEditDialog_message));
+        args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.cancelEditDialog_positive_caption);
+        args.putInt(AppDialog.DIALOG_NEGATIVE_RID, R.string.cancelEditDialog_negative_caption);
+
+        appDialog.setArguments(args);
+        appDialog.show(getSupportFragmentManager(), null);
     }
 
     private void taskEditRequest(Task task){
