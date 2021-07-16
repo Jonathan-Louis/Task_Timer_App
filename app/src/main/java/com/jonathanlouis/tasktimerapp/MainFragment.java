@@ -1,5 +1,6 @@
 package com.jonathanlouis.tasktimerapp;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.security.InvalidParameterException;
 
-public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, CursorRecyclerViewAdapter.OnTaskClickListener {
 
     private static final String TAG = "MainFragment";
 
@@ -33,7 +34,35 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onActivityCreated: called");
         super.onActivityCreated(savedInstanceState);
+
+        //activities containing this fragment must implement its callbacks
+        Activity activity = getActivity();
+        if(!(activity instanceof CursorRecyclerViewAdapter.OnTaskClickListener)){
+            throw new ClassCastException(activity.getClass().getSimpleName() +
+                    " must implement CursorRecyclerViewAdapter.OnTaskClickListener interface");
+        }
+
         LoaderManager.getInstance(this).initLoader(LOADER_ID, null, this);
+    }
+
+    @Override
+    public void onEditClick(Task task) {
+        Log.d(TAG, "onEditClick: called");
+        CursorRecyclerViewAdapter.OnTaskClickListener listener = (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity();
+
+        if(listener != null){
+            listener.onEditClick(task);
+        }
+    }
+
+    @Override
+    public void onDeleteClick(Task task) {
+        Log.d(TAG, "onDeleteClick: called");
+        CursorRecyclerViewAdapter.OnTaskClickListener listener = (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity();
+
+        if(listener != null){
+            listener.onDeleteClick(task);
+        }
     }
 
     @Override
@@ -47,10 +76,20 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         RecyclerView recyclerView = view.findViewById(R.id.task_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new CursorRecyclerViewAdapter(null, (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity());
+        if(adapter == null) {
+            adapter = new CursorRecyclerViewAdapter(null, this);
+        }
+
         recyclerView.setAdapter(adapter);
 
         return view;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: called");
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {

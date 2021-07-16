@@ -75,7 +75,6 @@ public class AppProvider extends ContentProvider {
 //                queryBuilder.setTables(TimingsConrtact.TABLE_NAME);
 //                break;
 //            case TIMINGS_ID:
-
 //                queryBuilder.setTables(TimingsContract.TABLE_NAME);
 //                long timingID = TimingsContract.getTimingID(uri);
 //                queryBuilder.appendWhere(TimingsContract.Columns._ID + " = " + timingID);
