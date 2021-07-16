@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,8 +38,30 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if(findViewById(R.id.task_details_container) != null){
-            twoPane = true;
+        twoPane = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
+        Log.d(TAG, "onCreate: twoPane = " + twoPane);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        //if add edit fragment exists then we are editing
+        Boolean editing = fragmentManager.findFragmentById(R.id.task_details_container) != null;
+        Log.d(TAG, "onCreate: editing = " + editing);
+
+        //references for the fragment containers
+        View addEditLayout = findViewById(R.id.task_details_container);
+        View mainFragment = findViewById(R.id.mainFragment);
+
+        if(twoPane){
+            Log.d(TAG, "onCreate: twoPane mode");
+            mainFragment.setVisibility(View.VISIBLE);
+            addEditLayout.setVisibility(View.VISIBLE);
+        } else if(editing){
+            Log.d(TAG, "onCreate: single pane editing");
+            mainFragment.setVisibility(View.GONE);
+            addEditLayout.setVisibility(View.VISIBLE);
+        } else {
+            Log.d(TAG, "onCreate: single pane, but not editing");
+            mainFragment.setVisibility(View.VISIBLE);
+            addEditLayout.setVisibility(View.GONE);
         }
     }
 
@@ -117,6 +140,15 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         if(fragment != null){
             getSupportFragmentManager().beginTransaction().remove(fragment).commit();
         }
+
+        View addEditLayout = findViewById(R.id.task_details_container);
+        View mainFragment = findViewById(R.id.mainFragment);
+
+        //just removed editing fragment, hide edit frame
+        if(!twoPane){
+            addEditLayout.setVisibility(View.GONE);
+            mainFragment.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -146,6 +178,17 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
                 if(fragment != null){
                     getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                    if(twoPane){
+                        finish();
+                    } else {
+                        View addEditLayout = findViewById(R.id.task_details_container);
+                        View mainFragment = findViewById(R.id.mainFragment);
+
+                        addEditLayout.setVisibility(View.GONE);
+                        mainFragment.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    finish();
                 }
                 break;
         }
@@ -226,22 +269,24 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
     private void taskEditRequest(Task task){
         Log.d(TAG, "taskEditRequest: called");
-        if(twoPane){
-            Log.d(TAG, "taskEditRequest: in two-pane mode(tablet or landscape)");
-            AddEditFragment fragment = new AddEditFragment();
 
-            Bundle arguments = new Bundle();
-            arguments.putSerializable(Task.class.getSimpleName(), task);
-            fragment.setArguments(arguments);
+        AddEditFragment fragment = new AddEditFragment();
 
-            getSupportFragmentManager().beginTransaction().replace(R.id.task_details_container, fragment).commit();
-        } else {
+        Bundle arguments = new Bundle();
+        arguments.putSerializable(Task.class.getSimpleName(), task);
+        fragment.setArguments(arguments);
+
+        Log.d(TAG, "taskEditRequest: twoPane mode");
+        getSupportFragmentManager().beginTransaction().replace(R.id.task_details_container, fragment).commit();
+
+        if(!twoPane) {
             Log.d(TAG, "taskEditRequest: in single pane mode");
-            Intent detailIntent = new Intent(this, AddEditActivity.class);
-            if (task != null){
-                detailIntent.putExtra(Task.class.getSimpleName(), task);
-            }
-            startActivity(detailIntent);
+            //hide left main fragment and show right edit frame
+            View mainFragment = findViewById(R.id.mainFragment);
+            View addEditLayout = findViewById(R.id.task_details_container);
+
+            mainFragment.setVisibility(View.GONE);
+            addEditLayout.setVisibility(View.VISIBLE);
         }
     }
 }

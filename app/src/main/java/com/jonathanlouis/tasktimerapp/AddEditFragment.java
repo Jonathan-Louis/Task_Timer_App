@@ -1,5 +1,6 @@
 package com.jonathanlouis.tasktimerapp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -13,19 +14,21 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 public class AddEditFragment extends Fragment {
 
     private static final String TAG = "AddEditFragment";
 
-    public enum FragmentEditMode {EDIT, ADD}
+    private enum FragmentEditMode {EDIT, ADD}
     private FragmentEditMode mode;
 
     private EditText nameTextView;
     private EditText descriptionTextView;
     private EditText sortOrderTextView;
-    private Button saveButton;
     private OnSaveClicked saveListener = null;
 
     interface OnSaveClicked{
@@ -48,13 +51,29 @@ public class AddEditFragment extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        //have to check if view has been created
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
     public void onDetach() {
         Log.d(TAG, "onDetach: called");
         super.onDetach();
 
         saveListener = null;
+        //have to check if view has been deleted
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(false);
+        }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -67,7 +86,7 @@ public class AddEditFragment extends Fragment {
         nameTextView = view.findViewById(R.id.addedit_name);
         descriptionTextView = view.findViewById(R.id.addedit_description);
         sortOrderTextView = view.findViewById(R.id.addedit_sortorder);
-        saveButton = view.findViewById(R.id.addedit_save);
+        Button saveButton = view.findViewById(R.id.addedit_save);
 
         Bundle arguments = getArguments();
 
