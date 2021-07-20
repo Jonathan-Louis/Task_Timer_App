@@ -1,12 +1,15 @@
 package com.jonathanlouis.tasktimerapp;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +29,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     public static final int LOADER_ID = 0;
     private CursorRecyclerViewAdapter adapter;
 
+    private Timing currentTiming = null;
+
     public MainFragment() {
         Log.d(TAG, "MainFragment: starts");
     }
@@ -43,10 +48,11 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         }
 
         LoaderManager.getInstance(this).initLoader(LOADER_ID, null, this);
+        setTimingText(currentTiming);
     }
 
     @Override
-    public void onEditClick(Task task) {
+    public void onEditClick(@NonNull Task task) {
         Log.d(TAG, "onEditClick: called");
         CursorRecyclerViewAdapter.OnTaskClickListener listener = (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity();
 
@@ -56,12 +62,35 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     @Override
-    public void onDeleteClick(Task task) {
+    public void onDeleteClick(@NonNull Task task) {
         Log.d(TAG, "onDeleteClick: called");
         CursorRecyclerViewAdapter.OnTaskClickListener listener = (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity();
 
         if(listener != null){
             listener.onDeleteClick(task);
+        }
+    }
+
+    @Override
+    public void onTaskLongClick(@NonNull Task task) {
+        Log.d(TAG, "onTaskLongClick: called");
+
+        if(currentTiming != null){
+            if(task.getId() == currentTiming.getTask().getId()){
+                //current task tapped for second time to stop timing
+                saveTiming(currentTiming);
+                currentTiming = null;
+                setTimingText(null);
+            } else {
+                //a new task is being timed, stop first task and start second
+                saveTiming(currentTiming);
+                currentTiming = new Timing(task);
+                setTimingText(currentTiming);
+            }
+        } else {
+            //no task being timed, start new task
+            currentTiming = new Timing(task);
+            setTimingText(currentTiming);
         }
     }
 
@@ -128,5 +157,31 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         Log.d(TAG, "onLoaderReset: called");
         adapter.swapCursor(null);
+    }
+
+    private void saveTiming(@NonNull Timing currentTiming){
+        Log.d(TAG, "saveTiming: called");
+        //if timing open save duration
+        currentTiming.setDuration();
+
+        ContentResolver contentResolver = getActivity().getContentResolver();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TimingsContract.Columns.TIMINGS_TASK_ID, currentTiming.getTask().getId());
+        contentValues.put(TimingsContract.Columns.TIMINGS_START_TIME, currentTiming.getStartTime());
+        contentValues.put(TimingsContract.Columns.TIMINGS_DURATION, currentTiming.getDuration());
+
+        //update database
+        contentResolver.insert(TimingsContract.CONTENT_URI, contentValues);
+    }
+
+    private void setTimingText(Timing timing){
+        TextView taskName = getActivity().findViewById(R.id.current_task);
+
+        if(currentTiming != null){
+            taskName.setText(getString(R.string.currentTiming) + currentTiming.getTask().getName());
+        }
+        else {
+            taskName.setText(getString(R.string.no_task_message));
+        }
     }
 }

@@ -37,4 +37,5 @@
     <string name="about_weblink_21">Instructions available at www.example.com</string>
     <string name="about_email">For support email tasktimer@email.com</string>
     <string name="about_credits">Icon derived from <b>analog clock</b> @ www.openclipart.org by <b>Anonymous</b></string>
+    <string name="currentTiming">\"Timing: \"</string>
 </resources>

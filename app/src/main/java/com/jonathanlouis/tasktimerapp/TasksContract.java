@@ -36,11 +36,11 @@ public class TasksContract {
     }
 
     //--methods--
-    static long getTaskID(Uri uri){
+    public static long getTaskID(Uri uri){
         return ContentUris.parseId(uri);
     }
 
-    static Uri buildTaskUri(long taskID){
+    public static Uri buildTaskUri(long taskID){
         return ContentUris.withAppendedId(CONTENT_URI, taskID);
     }
 }

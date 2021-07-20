@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -123,12 +124,12 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     }
 
     @Override
-    public void onEditClick(Task task) {
+    public void onEditClick(@NonNull Task task) {
         taskEditRequest(task);
     }
 
     @Override
-    public void onDeleteClick(Task task) {
+    public void onDeleteClick(@NonNull Task task) {
         Log.d(TAG, "onDeleteClick: called");
         AppDialog appDialog = new AppDialog();
         Bundle args = new Bundle();
@@ -160,6 +161,11 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
             addEditLayout.setVisibility(View.GONE);
             mainFragment.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onTaskLongClick(@NonNull Task task) {
+        //handled by fragment(method required for interface)
     }
 
     @Override
