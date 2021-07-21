@@ -21,6 +21,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.jonathanlouis.tasktimerapp.debug.TestData;
+
 public class MainActivity extends AppCompatActivity implements CursorRecyclerViewAdapter.OnTaskClickListener, AddEditFragment.OnSaveClicked, AppDialog.DialogEvents {
 
     private static final String TAG = "MainActivity";
@@ -71,6 +73,11 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        if(BuildConfig.DEBUG){
+            MenuItem generate = menu.findItem(R.id.menumain_generate);
+            generate.setVisible(true);
+        }
         return true;
     }
 
@@ -107,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
                 break;
                 
             case R.id.menumain_generate:
+                TestData.generateTestData(getContentResolver());
                 break;
 
             case android.R.id.home:

@@ -56,6 +56,8 @@ class AppDatabase extends SQLiteOpenHelper {
         Log.d(TAG, "onCreate: sql command: " + sSQL);
         db.execSQL(sSQL);
 
+        addTimingsTable(db);
+
         Log.d(TAG, "onCreate: ends");
     }
 
