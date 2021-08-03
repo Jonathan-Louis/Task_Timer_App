@@ -38,4 +38,9 @@
     <string name="about_email">For support email tasktimer@email.com</string>
     <string name="about_credits">Icon derived from <b>analog clock</b> @ www.openclipart.org by <b>Anonymous</b></string>
     <string name="currentTiming">\"Timing: \"</string>
+    <string name="td_text_name">Task Name</string>
+    <string name="td_text_date">Date</string>
+    <string name="td_text_duration">Duration</string>
+    <string name="td_text_description">Description</string>
+    <string name="title_activity_durations_report">DurationsReport</string>
 </resources>

@@ -80,15 +80,15 @@ public class AppProvider extends ContentProvider {
                 queryBuilder.appendWhere(TimingsContract.Columns._ID + " = " + timingID);
                 break;
 
-//            case TASK_DURATION:
-//                queryBuilder.setTables(DurationsContract.TABLE_NAME);
-//                break;
+            case TASK_DURATION:
+                queryBuilder.setTables(DurationsContract.VIEW_NAME);
+                break;
 
-//            case TASK_DURATION_ID:
-//                queryBuilder.setTables(DurationsContract.TABLE_NAME);
-//                long durationID = DurationsContract.getDurationID(uri);
-//                queryBuilder.appendWhere(DurationsContract.Columns._ID + " = " + durationID);
-//                break;
+            case TASK_DURATION_ID:
+                queryBuilder.setTables(DurationsContract.VIEW_NAME);
+                long durationID = DurationsContract.getDurationsID(uri);
+                queryBuilder.appendWhere(DurationsContract.Columns._ID + " = " + durationID);
+                break;
 
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -119,11 +119,11 @@ public class AppProvider extends ContentProvider {
             case TIMINGS_ID:
                 return TimingsContract.CONTENT_ITEM_TYPE;
 
-//            case TASK_DURATION:
-//                return DurationsContract.CONTENT_TYPE;
-//
-//            case TASK_DURATION_ID:
-//                return DurationsContract.CONTENT_ITEM_TYPE;
+            case TASK_DURATION:
+                return DurationsContract.CONTENT_TYPE;
+
+            case TASK_DURATION_ID:
+                return DurationsContract.CONTENT_ITEM_TYPE;
 
             default:
                 throw new IllegalArgumentException("unknown uri: " + uri);
@@ -293,8 +293,8 @@ public class AppProvider extends ContentProvider {
         uriMatcher.addURI(CONTENT_AUTHORITY, TimingsContract.TABLE_NAME, TIMINGS);
         uriMatcher.addURI(CONTENT_AUTHORITY, TimingsContract.TABLE_NAME + "/#", TIMINGS_ID);
 
-//        uriMatcher.addURI(CONTENT_AUTHORITY, DurationsContract.TABLE_NAME, TASK_DURATION);
-//        uriMatcher.addURI(CONTENT_AUTHORITY, DurationsContract.TALBE_NAME + "/#", TASK_DURATION_ID);
+        uriMatcher.addURI(CONTENT_AUTHORITY, DurationsContract.VIEW_NAME, TASK_DURATION);
+        uriMatcher.addURI(CONTENT_AUTHORITY, DurationsContract.VIEW_NAME + "/#", TASK_DURATION_ID);
 
         return uriMatcher;
     }

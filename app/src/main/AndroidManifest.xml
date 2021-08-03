@@ -9,7 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TaskTimerApp">
-
+        <activity
+            android:name=".DurationsReport"
+            android:label="@string/title_activity_durations_report"
+            android:theme="@style/Theme.TaskTimerApp.NoActionBar"
+            android:parentActivityName=".MainActivity"></activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
