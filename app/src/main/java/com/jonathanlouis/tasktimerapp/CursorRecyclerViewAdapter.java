@@ -131,12 +131,14 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
             return null;
         }
 
+        int numItems = getItemCount();
+
         final Cursor oldCursor = cursor;
         cursor = newCursor;
         if(newCursor != null){
             notifyDataSetChanged();
         } else {
-            notifyItemRangeRemoved(0, getItemCount());
+            notifyItemRangeRemoved(0, numItems);
         }
 
         return oldCursor;

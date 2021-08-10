@@ -37,10 +37,17 @@
     <string name="about_weblink_21">Instructions available at www.example.com</string>
     <string name="about_email">For support email tasktimer@email.com</string>
     <string name="about_credits">Icon derived from <b>analog clock</b> @ www.openclipart.org by <b>Anonymous</b></string>
-    <string name="currentTiming">\"Timing: \"</string>
+    <string name="currentTiming">Timing: </string>
     <string name="td_text_name">Task Name</string>
     <string name="td_text_date">Date</string>
     <string name="td_text_duration">Duration</string>
     <string name="td_text_description">Description</string>
     <string name="title_activity_durations_report">DurationsReport</string>
+    <string name="rm_title_filter_day">Show Day</string>
+    <string name="rm_title_filter_week">Show Week</string>
+    <string name="rm_title_filter_date">Set Report Date</string>
+    <string name="rm_title_delete">Delete Old Timings</string>
+    <string name="date_title_filter">Select date for report</string>
+    <string name="date_title_delete">Select date to DELETE up to</string>
+    <string name="delete_timings_message">Are you sure you want to delete all timings before %1s?</string>
 </resources>
